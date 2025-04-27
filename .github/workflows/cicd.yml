@@ -2,11 +2,11 @@ name: CICD
 
 on:
   push:
-    branches: [production]
+    branches: [ production ]
 
 jobs:
   build:
-    runs-on: [ubuntu-latest]
+    runs-on: [ ubuntu-latest ]
     steps:
       - name: Checkout source
         uses: actions/checkout@v3
@@ -17,7 +17,7 @@ jobs:
           java-version: '17'
       - name: Configure GitHub Packages credentials
         run: |
-          echo "//maven.pkg.github.com/devthiagoramon/tdlib-java/:_authToken=${{secrets.GITHUB_TOKEN}}" >> ~/.m2/settings.xml
+          echo "<settings><servers><server><id>github</id><username>devthiagoramon</username><password>${{secrets.GITHUB_TOKEN}}</password></server></servers></settings>" > ~/.m2/settings.xml
       - name: Build project
         run: mvn clean install -DskipTests
       - name: Login to docker hub
@@ -29,7 +29,7 @@ jobs:
 
   deploy:
     needs: build
-    runs-on: [aws-ec2]
+    runs-on: [ aws-ec2 ]
     steps:
       - name: Pull image from docker hub
         run: docker pull thiagoramon/hallel-api-production:latest
