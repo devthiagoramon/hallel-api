@@ -6,7 +6,7 @@ COPY pom.xml .
 COPY src/main/resources/tdlib.jar src/main/resources/tdlib.jar
 RUN mvn install:install-file \
     -Dfile=src/main/resources/tdlib.jar \
-    -DgroupId=com.devthiagoramon \
+    -DgroupId=com.telegram \
     -DartifactId=tdlib \
     -Dversion=1.0.0 \
     -Dpackaging=jar
