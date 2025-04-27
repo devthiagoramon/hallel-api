@@ -1,14 +1,20 @@
+FROM maven:3.9.6-eclipse-temurin-17 as build
 
-# BUILD
-FROM maven:3.8.4-openjdk-17 AS build
-WORKDIR /app
+WORKDIR /build
+
 COPY pom.xml .
+COPY libs/tdlib.jar libs/tdlib.jar
+RUN mvn install:install-file \
+    -Dfile=libs/tdlib.jar \
+    -DgroupId=com.devthiagoramon \
+    -DartifactId=tdlib \
+    -Dversion=1.0.0 \
+    -Dpackaging=jar
+
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-# RUN
-FROM openjdk:17-alpine
+FROM openjdk:17-jdk-slim
 WORKDIR /app
-COPY --from=build /app/target/Api-Hallel-0.0.1-SNAPSHOT.jar ./hallel-api.jar
-EXPOSE 8080
-CMD ["java", "-jar", "hallel-api.jar"]
+COPY --from=build /build/target/hallel-api-production.jar app.jar
+ENTRYPOINT ["java", "-jar", "app.jar"]
