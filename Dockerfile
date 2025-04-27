@@ -8,7 +8,7 @@ RUN mvn install:install-file \
     -Dfile=src/main/resources/tdlib.jar \
     -DgroupId=com.telegram \
     -DartifactId=tdlib \
-    -Dversion=1.0.0 \
+    -Dversion=1.0 \
     -Dpackaging=jar
 
 COPY src ./src

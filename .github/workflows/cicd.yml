@@ -15,17 +15,17 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Configure GitHub Packages credentials
-        run: |
-          mkdir -p ~/.m2
-          echo "<settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.xsd\"><servers><server><id>github</id><username>devthiagoramon</username><password>${{ secrets.GITHUB_TOKEN }}</password></server></servers><profiles><profile><id>github</id><repositories><repository><id>github</id><url>https://maven.pkg.github.com/devthiagoramon/tdlib-java</url></repository></repositories></profile></profiles></settings>" > ~/.m2/settings.xml
+#      - name: Configure GitHub Packages credentials
+#        run: |
+#          mkdir -p ~/.m2
+#          echo "<settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.xsd\"><servers><server><id>github</id><username>devthiagoramon</username><password>${{ secrets.GITHUB_TOKEN }}</password></server></servers><profiles><profile><id>github</id><repositories><repository><id>github</id><url>https://maven.pkg.github.com/devthiagoramon/tdlib-java</url></repository></repositories></profile></profiles></settings>" > ~/.m2/settings.xml
       - name: Install TDLib manually
         run: |
             mvn install:install-file \
               -Dfile=src/main/resources/tdlib.jar \
               -DgroupId=com.telegram \
               -DartifactId=tdlib \
-              -Dversion=1.0.0 \
+              -Dversion=1.0 \
               -Dpackaging=jar
       - name: Build project
         run: mvn clean install -DskipTests
