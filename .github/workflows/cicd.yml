@@ -42,9 +42,10 @@ jobs:
     steps:
       - name: Install Docker (if not installed)
         run: |
-            sudo apt-get update
-            sudo apt-get install -y docker.io
-            sudo systemctl enable --now docker
+            sudo yum update -y
+            sudo yum install -y docker
+            sudo service docker start
+            sudo usermod -aG docker ec2-user
       - name: Pull image from docker hub
         run: sudo docker pull thiagoramon/hallel-api-production:latest
       - name: Delete old container
