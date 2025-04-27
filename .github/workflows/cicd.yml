@@ -1,0 +1,37 @@
+name: CICD
+
+on:
+  push:
+    branches: [production]
+
+jobs:
+  build:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Build project
+        run: mvn clean install -DskipTests
+      - name: Login to docker hub
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+      - name: Build docker image
+        run: docker build -t thiagoramon/hallel-api-production .
+      - name: Publish image to Docker hub
+        run: docker push thiagoramon/hallel-api-production:latest
+
+  deploy:
+    needs: build
+    runs-on: [aws-ec2]
+    steps:
+      - name: Pull image from docker hub
+        run: docker pull thiagoramon/hallel-api-production:latest
+      - name: Delete old container
+        run: docker rm -f hallel-api-production-containe
+      - name: Run docker container
+        run: docker run -d -p 8080:8080 --name hallel-api-production-container thiagoramon/hallel-api-production:latest
+
