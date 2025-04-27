@@ -5,7 +5,7 @@ WORKDIR /build
 COPY pom.xml .
 COPY libs/tdlib.jar libs/tdlib.jar
 RUN mvn install:install-file \
-    -Dfile=libs/tdlib.jar \
+    -Dfile=src/main/resources/tdlib.jar \
     -DgroupId=com.devthiagoramon \
     -DartifactId=tdlib \
     -Dversion=1.0.0 \
