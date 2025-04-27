@@ -40,10 +40,15 @@ jobs:
     needs: build
     runs-on: [ aws-ec2 ]
     steps:
+      - name: Install Docker (if not installed)
+        run: |
+            sudo apt-get update
+            sudo apt-get install -y docker.io
+            sudo systemctl enable --now docker
       - name: Pull image from docker hub
-        run: docker pull thiagoramon/hallel-api-production:latest
+        run: sudo docker pull thiagoramon/hallel-api-production:latest
       - name: Delete old container
-        run: docker rm -f hallel-api-production-container
+        run: sudo docker rm -f hallel-api-production-container
       - name: Run docker container
-        run: docker run -d -p 8080:8080 --name hallel-api-production-container thiagoramon/hallel-api-production:latest
+        run: sudo docker run -d -p 8080:8080 --name hallel-api-production-container thiagoramon/hallel-api-production:latest
 
