@@ -1,0 +1,47 @@
+telegram:
+  parameters:
+    api-id: "29287658"
+    api-hash: "e739b089c47e8415f4d688d78c18ade6"
+    phone-number: "+5592991533437"
+security:
+  expiration:
+    time-coordenador: 86400000
+spring:
+  cloud:
+    gcp:
+      storage:
+        bucket: hallel-bucket
+  devtools:
+    restart:
+      enabled: false
+  application:
+    name: "hallel-api"
+  mail:
+    host: "smtp.gmail.com"
+    port: 587
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  data:
+    mongodb:
+      uri: mongodb+srv://miguel-arcanjo:huLb6nxMTRXPbrQk@hallel-bancodedados.xi3oayc.mongodb.net/?retryWrites=true&w=majority
+      database: hallel
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
+springdoc:
+  api-docs:
+    path: "/api-docs"
+  swagger-ui:
+    path: "/api-docs-ui"
+    operations-sorter: method
+server:
+  port: 8080
+  address: 0.0.0.0

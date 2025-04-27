@@ -1,0 +1,86 @@
+package br.api.hallel.moduloAPI.repository;
+
+import br.api.hallel.moduloAPI.dto.v1.ministerio.MembroMinisterioWithInfosResponse;
+import br.api.hallel.moduloAPI.dto.v1.ministerio.MinisterioResponse;
+import br.api.hallel.moduloAPI.dto.v2.ministerio.MinisterioResponseV2;
+import br.api.hallel.moduloAPI.model.MembroMinisterio;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.mongodb.repository.Aggregation;
+import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface MembroMinisterioRepository
+        extends MongoRepository<MembroMinisterio, String> {
+    Page<MembroMinisterio> findByMinisterioId(String ministerioId, Pageable pageable);
+
+    @Aggregation(
+            pipeline = {
+                    "{$addFields: {idMinisterioOID: {$toObjectId: '$ministerioId'},idMembroOID: {$toObjectId: '$membroId'},idsFuncaoMinisterio:{$map: {input: '$funcaoMinisterioIds',as: 'stringId',in: {$toObjectId: '$$stringId'}}}}}",
+                    "{$lookup: {from: 'membro',localField: 'idMembroOID',foreignField: '_id',as: 'membro'}}",
+                    "{$lookup: {from: 'funcaoMinisterio',localField: 'idsFuncaoMinisterio',foreignField: '_id',as: 'funcaoMinisterio'}}",
+                    "{$match:  {'ministerioId': ?0}}",
+                    "{$unwind: '$membro'}",
+            }
+    )
+    Slice<MembroMinisterioWithInfosResponse> findWithInfosByMinisterioId(
+            String ministerioId, Pageable pageable);
+
+    Optional<MembroMinisterio> findByMinisterioIdAndMembroId(
+            String idMinisterio, String idMembro);
+
+    @Aggregation(
+            pipeline = {
+                    "{$addFields: {idMinisterioOID: {$toObjectId: '$ministerioId'},idMembroOID: {$toObjectId: '$membroId'},idsFuncaoMinisterio:{$map: {input: '$funcaoMinisterioIds',as: 'stringId',in: {$toObjectId: '$$stringId'}}}}}",
+                    "{$lookup: {from: 'membro',localField: 'idMembroOID',foreignField: '_id',as: 'membro'}}",
+                    "{$lookup: {from: 'ministerio',localField: 'idMinisterioOID',foreignField: '_id',as: 'ministerio'}}",
+                    "{$lookup: {from: 'funcaoMinisterio',localField: 'idsFuncaoMinisterio',foreignField: '_id',as: 'funcaoMinisterio'}}",
+                    "{$match: {'_id':  ?0}}",
+                    "{$unwind: '$membro'}",
+                    "{$unwind: '$ministerio'}",
+            }
+    )
+    Optional<MembroMinisterioWithInfosResponse> findWithInfosId(
+            String idMembroMinisterio);
+
+    List<MembroMinisterio> findByMembroId(String membroId);
+
+    @Aggregation(
+            pipeline = {
+                    "{$match: {'membroId':  ?0}}",
+                    "{$addFields: {idMinisterioOID: {$toObjectId: '$ministerioId'}}}",
+                    "{$lookup: {from: 'ministerio', localField: 'idMinisterioOID', foreignField: '_id', as: 'ministerios'}}",
+                    "{ $unwind: '$ministerios'}",
+                    "{$project: {" +
+                            "      \"id\": \"$ministerios._id\"," +
+                            "      \"nome\": \"$ministerios.nome\"," +
+                            "      \"coordenadorId\": \"$ministerios.coordenadorId\"," +
+                            "      \"viceCoordenadorId\": \"$ministerios.viceCoordenadorId\"," +
+                            "      \"descricao\": \"$ministerios.descricao\"," +
+                            "      \"imagem\": \"$ministerios.imagem\"," +
+                            "      \"objetivos\": \"$ministerios.objetivos\"" +
+                            "    }}",
+
+            }
+    )
+    List<MinisterioResponse> findMinisterioByMembroId(
+            String idMembro);
+
+    @Aggregation(
+            pipeline = {
+                    "{$match: {'membroId':  ?0}}",
+                    "{$addFields: {idMinisterioOID: {$toObjectId: '$ministerioId'}}}",
+                    "{$lookup: {from: 'ministerio', localField: 'idMinisterioOID', foreignField: '_id', as: 'ministerios'}}",
+                    "{ $unwind: '$ministerios'}",
+                    "{$project: {" +
+                            "      \"id\": \"$ministerios._id\",    }}",
+
+            }
+    )
+    List<String> findMinisterioV2ByMembroId(String idMembro);
+}

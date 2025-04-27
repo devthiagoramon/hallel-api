@@ -1,0 +1,13 @@
+telegram:
+  parameters:
+    api-id: "29287658"
+    api-hash: "e739b089c47e8415f4d688d78c18ade6"
+    phone-number: "+5592991533437"
+security:
+  expiration:
+    time-coordenador: 86400000
+server:
+  port: 8888
+spring:
+  application:
+    name: "hallel-api"
