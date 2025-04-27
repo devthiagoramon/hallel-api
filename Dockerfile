@@ -16,6 +16,6 @@ RUN mvn clean package -DskipTests
 
 FROM openjdk:17-alpine
 WORKDIR /app
-COPY --from=build /app/target/Api-Hallel-0.0.1-SNAPSHOT.jar ./hallel-api.jar
+COPY --from=build /build/target/Api-Hallel-0.0.1-SNAPSHOT.jar ./hallel-api.jar
 EXPOSE 8080
 CMD ["java", "-jar", "hallel-api.jar"]
