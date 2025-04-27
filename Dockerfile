@@ -4,6 +4,7 @@ WORKDIR /build
 
 COPY pom.xml .
 COPY src/main/resources/tdlib.jar src/main/resources/tdlib.jar
+COPY src/main/resources/crypto-avatar.json src/main/resources/crypto-avatar.json
 RUN mvn install:install-file \
     -Dfile=src/main/resources/tdlib.jar \
     -DgroupId=com.telegram \
