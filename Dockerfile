@@ -3,7 +3,7 @@ FROM maven:3.9.6-eclipse-temurin-17 as build
 WORKDIR /build
 
 COPY pom.xml .
-COPY libs/tdlib.jar libs/tdlib.jar
+COPY src/main/resources/tdlib.jar src/main/resources/tdlib.jar
 RUN mvn install:install-file \
     -Dfile=src/main/resources/tdlib.jar \
     -DgroupId=com.devthiagoramon \
