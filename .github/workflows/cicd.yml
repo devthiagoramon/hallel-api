@@ -17,45 +17,7 @@ jobs:
           java-version: '17'
       - name: Configure GitHub Packages credentials
         run: |
-          echo "<settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\" \
-                xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" \
-                xsi:schemaLocation=\"http://maven.apache.org/SETTINGS/1.0.0 http://maven.apache.org/xsd/settings-1.0.xsd\">
-                  <servers>
-                    <server>
-                      <id>github</id>
-                      <username>devthiagoramon</username>
-                      <password>${{ secrets.GITHUB_TOKEN }}</password>
-                    </server>
-                  </servers>
-                  <mirrors>
-                    <mirror>
-                      <id>github</id>
-                      <mirrorOf>central</mirrorOf>
-                      <url>https://maven.pkg.github.com/devthiagoramon/tdlib-java</url>
-                      <blocked>false</blocked>
-                    </mirror>
-                  </mirrors>
-                  <profiles>
-                    <profile>
-                      <id>github</id>
-                      <repositories>
-                        <repository>
-                          <id>github</id>
-                          <url>https://maven.pkg.github.com/devthiagoramon/tdlib-java</url>
-                          <snapshots>
-                            <enabled>true</enabled>
-                          </snapshots>
-                          <releases>
-                            <enabled>true</enabled>
-                          </releases>
-                        </repository>
-                      </repositories>
-                    </profile>
-                  </profiles>
-                  <activeProfiles>
-                    <activeProfile>github</activeProfile>
-                  </activeProfiles>
-                </settings>" > ~/.m2/settings.xml
+          echo "//maven.pkg.github.com/devthiagoramon/tdlib-java/:_authToken=${{secrets.GITHUB_TOKEN}}" >> ~/.m2/settings.xml
       - name: Build project
         run: mvn clean install -DskipTests
       - name: Login to docker hub
