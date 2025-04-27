@@ -17,7 +17,7 @@ jobs:
           java-version: '17'
       - name: Configure GitHub Packages credentials
         run: |
-          echo "<settings><servers><server><id>github</id><username>devthiagoramon</username><password>${{secrets.GITHUB_TOKEN}}</password></server></servers><profiles><profile><id>github</id><repositories><repository><id>github</id><url>https://maven.pkg.github.com/devthiagoramon/tdlib-java</url></repository></repositories></profile></profiles></settings>" > ~/.m2/settings.xml
+          echo "<settings><servers><server><id>github</id><url>https://maven.pkg.github.com/devthiagoramon/tdlib-java</url></server></servers></settings>" > ~/.m2/settings.xml
       - name: Build project
         run: mvn clean install -DskipTests
       - name: Login to docker hub
