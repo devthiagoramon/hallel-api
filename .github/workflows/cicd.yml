@@ -1,0 +1,54 @@
+name: CICD
+
+on:
+  push:
+    branches: [ production ]
+
+jobs:
+  build:
+    runs-on: [ ubuntu-latest ]
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Install TDLib manually
+        run: |
+            mvn install:install-file \
+              -Dfile=src/main/resources/tdlib.jar \
+              -DgroupId=com.telegram \
+              -DartifactId=tdlib \
+              -Dversion=1.0 \
+              -Dpackaging=jar
+      - name: Generate crypto-avatar.json (using GitHub Secrets)
+        run: |
+            echo '${{ secrets.GPC_CREDENTIALS_TOKEN }}' > src/main/resources/crypto-avatar.json
+      - name: Build project
+        run: mvn clean install -DskipTests
+      - name: Login to docker hub
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+      - name: Build docker image
+        run: docker build -t thiagoramon/hallel-api-production .
+      - name: Publish image to Docker hub
+        run: docker push thiagoramon/hallel-api-production:latest
+
+  deploy:
+    needs: build
+    runs-on: [ aws-ec2 ]
+    steps:
+      - name: Install Docker (if not installed)
+        run: |
+            sudo yum update -y
+            sudo yum install -y docker
+            sudo service docker start
+            sudo usermod -aG docker ec2-user
+      - name: Pull image from docker hub
+        run: sudo docker pull thiagoramon/hallel-api-production:latest
+      - name: Delete old container
+        run: sudo docker rm -f hallel-api-production-container
+      - name: Run docker container
+        run: sudo docker run -d -p 8080:8080 --name hallel-api-production-container thiagoramon/hallel-api-production:latest
+

@@ -1,14 +1,23 @@
+FROM maven:3.9.6-eclipse-temurin-17 as build
 
-# BUILD
-FROM maven:3.8.4-openjdk-17 AS build
-WORKDIR /app
+WORKDIR /build
+
 COPY pom.xml .
+COPY src/main/resources/tdlib.jar src/main/resources/tdlib.jar
+COPY src/main/resources/crypto-avatar.json src/main/resources/crypto-avatar.json
+RUN mvn install:install-file \
+    -Dfile=src/main/resources/tdlib.jar \
+    -DgroupId=com.telegram \
+    -DartifactId=tdlib \
+    -Dversion=1.0 \
+    -Dpackaging=jar
+
 COPY src ./src
 RUN mvn clean package -DskipTests
 
-# RUN
 FROM openjdk:17-alpine
 WORKDIR /app
-COPY --from=build /app/target/Api-Hallel-0.0.1-SNAPSHOT.jar ./hallel-api.jar
+COPY --from=build /build/target/Api-Hallel-0.0.1-SNAPSHOT.jar ./hallel-api.jar
+COPY --from=build /build/src/main/resources/crypto-avatar.json ./crypto-avatar.json
 EXPOSE 8080
 CMD ["java", "-jar", "hallel-api.jar"]
